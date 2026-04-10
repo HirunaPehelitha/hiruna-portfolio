@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login Zone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #090909; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            font-family: 'Montserrat', sans-serif;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+        }
+        .login-box { 
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 50px 40px; 
+            border-radius: 20px; 
+            text-align: center; 
+            width: 100%; 
+            max-width: 400px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9); 
+        }
+        h1 { margin-bottom: 30px; font-weight: 300; letter-spacing: 0.3em; font-size: 1.2rem; color: #fff;}
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            letter-spacing: 0.1em;
+            outline: none;
+            transition: border 0.3s;
+        }
+        input:focus {
+            border-color: rgba(255,255,255,0.5);
+        }
+        button {
+            width: 100%;
+            background: white;
+            color: black;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+        }
+        #error-msg {
+            color: #f87171;
+            font-size: 0.8rem;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>SECURE ACCESS</h1>
+        <input type="text" id="username" placeholder="USERNAME" autocomplete="off">
+        <input type="password" id="password" placeholder="PASSWORD">
+        <button onclick="attemptLogin()">ENTER</button>
+        <p id="error-msg">Incoming Credentials Invalid</p>
+    </div>
+
+    <script>
+        // Pre-defined hash for client side redirect logic (Double checked by backend)
+        function attemptLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            
+            // Build key for API verification
+            const key = btoa(u + ":" + p);
+            
+            // Basic client-check (Backend will strictly reject false uploads anyway)
+            if (u === "hiruna" && p === "admin2026") {
+                localStorage.setItem("admin_key", key);
+                window.location.href = "admin.html";
+            } else {
+                document.getElementById('error-msg').style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
