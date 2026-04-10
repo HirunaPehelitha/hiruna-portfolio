@@ -129,31 +129,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.35/dist/lenis.min.js"></script>
-    <!-- Works Loader: fetches from Supabase via our API -->
+    <!-- Works Loader: fetches from Firebase via our API -->
     <script>
     (async function loadWorks() {
         const stack = document.getElementById('worksStack');
         if (!stack) return;
 
-        // If we have a SUPABASE_URL env, load from DB. Otherwise fall back to local images folder.
-        const SUPABASE_URL = 'https://crvkntzxflrflwsrnqvx.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNydmtudHp4ZmxyZmx3c3JucXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4MjQ0NTQsImV4cCI6MjA5MTQwMDQ1NH0.mu4lk-xZKPIOqjnP7tR1TOZXt8qw1d850IbgTolJITA';
-
         let images = [];
+        try {
+            const res = await fetch('/api/works');
+            const data = await res.json();
+            if (data.success && data.works) {
+                images = data.works.map(w => ({ src: w.url, alt: w.filename }));
+            }
+        } catch(e) { console.warn('Works load failed', e); }
 
-        if (SUPABASE_URL && SUPABASE_KEY) {
-            try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/works?select=url,filename&order=position.asc`, {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-                });
-                const data = await res.json();
-                images = data.map(w => ({ src: w.url, alt: w.filename }));
-            } catch(e) { console.warn('DB load failed, using fallback'); }
-        }
-
-        // Fallback: show any images currently hardcoded (will be empty on fresh deploy)
         if (images.length === 0) {
-            // Show nothing gracefully – works are managed via admin panel
             stack.innerHTML = "<p style='color:#444; text-align:center; padding:60px 0; font-size:0.8rem; letter-spacing:0.2em;'>WORKS LOADING...</p>";
             return;
         }
@@ -162,7 +153,6 @@
             `<img src="${img.src}" class="stack-img gsap-fade-up" alt="${img.alt}">`
         ).join('');
 
-        // Re-trigger GSAP animations on newly added images
         if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
             gsap.utils.toArray('#worksStack .gsap-fade-up').forEach(el => {
                 gsap.fromTo(el, { y: 50, autoAlpha: 0 }, {
