@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Admin CMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #050505; color: white; min-height: 100vh; 
+            font-family: 'Montserrat', sans-serif;
+            background-image: radial-gradient(circle at top left, #1a1a2e 0%, #000 70%);
+            padding: 40px;
+        }
+        .topbar { margin-bottom: 40px; display:flex; justify-content:space-between; align-items:center; }
+        .topbar-left { display:flex; align-items:center; gap:20px; }
+        .topbar a { color: #888; text-decoration: none; font-size: 0.75rem; letter-spacing: 0.2em; transition: color 0.3s; }
+        .topbar a:hover { color: white; }
+        .badge { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); 
+            padding: 4px 12px; border-radius: 50px; font-size: 0.65rem; letter-spacing: 0.15em; }
+        
+        .dashboard { display: grid; grid-template-columns: 380px 1fr; gap: 30px; max-width: 1400px; margin: 0 auto; }
+        .panel {
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05); padding: 35px;
+            border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .panel-title { font-weight: 300; letter-spacing: 0.3em; font-size: 0.9rem; margin-bottom: 5px; }
+        .panel-subtitle { color: #555; font-size: 0.75rem; font-weight: 300; margin-bottom: 28px; }
+
+        /* Upload */
+        .upload-area { 
+            border: 1px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 40px 20px; 
+            cursor: pointer; text-align: center; transition: all 0.3s; margin-bottom: 20px; background: rgba(0,0,0,0.3);
+        }
+        .upload-area:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.04); }
+        .upload-area p { color: #666; font-size: 0.8rem; }
+        .upload-area .icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.4; }
+        #fileInput { display: none; }
+        #previewImg { max-width: 100%; border-radius: 8px; display: none; margin-top: 10px; }
+
+        .btn { 
+            background: white; color: black; padding: 14px 30px; border: none; border-radius: 50px;
+            font-weight: 700; letter-spacing: 0.2em; font-size: 0.7rem; cursor: pointer; width: 100%; transition: all 0.3s;
+        }
+        .btn:hover { background: #ddd; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
+        .btn:disabled { background: rgba(255,255,255,0.08); color: #444; cursor: not-allowed; transform: none; box-shadow: none; }
+        #status { margin-top: 14px; font-size: 0.8rem; display: none; text-align: center; font-weight: 500; }
+        #filename-label { font-size: 0.75rem; color: #777; margin-bottom: 14px; text-align:center; display:none; }
+
+        /* Works List */
+        .works-list { display: flex; flex-direction: column; gap: 12px; }
+        .work-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0,0,0,0.5); padding: 12px 16px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.04); transition: all 0.3s; gap: 16px;
+        }
+        .work-item:hover { border-color: rgba(255,255,255,0.15); }
+        .work-item.dragging { opacity: 0.5; border: 1px dashed white; }
+        .work-info { display: flex; align-items: center; gap: 14px; flex: 1; overflow: hidden; }
+        .work-thumb { width: 90px; height: 50px; object-fit: cover; border-radius: 6px; flex-shrink: 0; background: #222; }
+        .work-meta { overflow: hidden; }
+        .work-name { font-size: 0.8rem; color: #ddd; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .work-pos { font-size: 0.65rem; color: #555; margin-top: 3px; }
+        .drag-handle { color: #444; cursor: grab; font-size: 1rem; flex-shrink: 0; user-select: none; }
+        .drag-handle:active { cursor: grabbing; }
+        .work-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .action-btn { 
+            background: transparent; color: #666; border: 1px solid #2a2a2a; border-radius: 50px; 
+            padding: 6px 14px; font-size: 0.65rem; cursor: pointer; transition: 0.2s; letter-spacing: 0.1em;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .action-btn:hover { color: white; border-color: #555; }
+        .btn-delete:hover { color: #f87171; border-color: #7f1d1d; background: rgba(127,29,29,0.1); }
+        
+        .empty-state { text-align: center; color: #444; padding: 40px 20px; font-size: 0.8rem; }
+        .loading { text-align: center; color: #444; padding: 20px; font-size: 0.75rem; }
+        
+        @media(max-width:950px) { .dashboard { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <a href="/">&larr; LIVE SITE</a>
+            <span class="badge">ADMIN CMS</span>
+        </div>
+        <a href="#" onclick="logout()">LOGOUT &times;</a>
+    </div>
+
+    <div class="dashboard">
+        <!-- UPLOAD PANEL -->
+        <div class="panel">
+            <p class="panel-title">UPLOAD NEW WORK</p>
+            <p class="panel-subtitle">High-res (1920x1080) presentations</p>
+            
+            <div class="upload-area" id="uploadZone">
+                <div class="icon">&#128247;</div>
+                <p>Click or drag & drop image here</p>
+                <input type="file" id="fileInput" accept="image/*">
+                <img id="previewImg">
+            </div>
+            <p id="filename-label">No file selected</p>
+            
+            <button class="btn" id="submitBtn" disabled>PUBLISH TO LIVE SITE</button>
+            <p id="status"></p>
+        </div>
+
+        <!-- MANAGE PANEL -->
+        <div class="panel">
+            <p class="panel-title">MANAGE WORKS</p>
+            <p class="panel-subtitle">Drag to reorder · Click Trash to delete permanently</p>
+            
+            <div class="works-list" id="worksContainer">
+                <div class="loading">Loading works from database...</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const authKey = localStorage.getItem('admin_key');
+    if (!authKey) window.location.href = "login.html";
+
+    const API = window.location.origin + '/api';
+
+    function logout() {
+        localStorage.removeItem('admin_key');
+        window.location.href = "login.html";
+    }
+
+    // ── Upload Logic ──────────────────────────────────────────────────────────
+    let selectedFileBase64 = null;
+    let selectedFileName = null;
+    const submitBtn = document.getElementById('submitBtn');
+    const uploadZone = document.getElementById('uploadZone');
+
+    uploadZone.addEventListener('click', () => document.getElementById('fileInput').click());
+    
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = 'white'; });
+    uploadZone.addEventListener('dragleave', () => uploadZone.style.borderColor = '');
+    uploadZone.addEventListener('drop', e => {
+        e.preventDefault(); uploadZone.style.borderColor = '';
+        handleFile(e.dataTransfer.files[0]);
+    });
+
+    document.getElementById('fileInput').addEventListener('change', e => handleFile(e.target.files[0]));
+
+    function handleFile(file) {
+        if (!file) return;
+        selectedFileName = file.name;
+        const reader = new FileReader();
+        reader.onload = event => {
+            selectedFileBase64 = event.target.result;
+            document.getElementById('previewImg').src = selectedFileBase64;
+            document.getElementById('previewImg').style.display = 'block';
+            uploadZone.querySelector('p').style.display = 'none';
+            uploadZone.querySelector('.icon').style.display = 'none';
+            uploadZone.style.padding = '10px';
+            document.getElementById('filename-label').textContent = file.name;
+            document.getElementById('filename-label').style.display = 'block';
+            submitBtn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    submitBtn.addEventListener('click', async () => {
+        if (!selectedFileBase64) return;
+        submitBtn.textContent = "UPLOADING..."; submitBtn.disabled = true;
+        const statusEl = document.getElementById('status');
+        try {
+            const res = await fetch(`${API}/upload`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}` },
+                body: JSON.stringify({ filename: selectedFileName, imageBase64: selectedFileBase64 })
+            });
+            const data = await res.json();
+            if (data.success) {
+                statusEl.textContent = "Published successfully!";
+                statusEl.style.color = "#4ade80"; statusEl.style.display = "block";
+                setTimeout(() => { statusEl.style.display = 'none'; fetchWorks(); submitBtn.textContent = "PUBLISH TO LIVE SITE"; }, 1500);
+            } else { statusEl.textContent = "Error: " + (data.message || data.error); statusEl.style.color = "#f87171"; statusEl.style.display = "block"; submitBtn.textContent = "PUBLISH TO LIVE SITE"; submitBtn.disabled = false; }
+        } catch(e) { statusEl.textContent = "Cannot connect to server!"; statusEl.style.color = "#f87171"; statusEl.style.display = "block"; submitBtn.disabled = false; submitBtn.textContent = "PUBLISH TO LIVE SITE"; }
+    });
+
+    // ── Works List Logic ──────────────────────────────────────────────────────
+    let currentWorks = [];
+
+    async function fetchWorks() {
+        const container = document.getElementById('worksContainer');
+        try {
+            const res = await fetch(`${API}/works`, { headers: { 'Authorization': `Basic ${authKey}` } });
+            if (res.status === 401) { logout(); return; }
+            const data = await res.json();
+            if (data.success) { currentWorks = data.works; renderWorks(); }
+        } catch(e) { container.innerHTML = "<div class='empty-state'>Cannot connect to CMS server.</div>"; }
+    }
+
+    function renderWorks() {
+        const container = document.getElementById('worksContainer');
+        container.innerHTML = "";
+        if (currentWorks.length === 0) {
+            container.innerHTML = "<div class='empty-state'>No works yet. Upload your first project!</div>"; return;
+        }
+        currentWorks.forEach((work, index) => {
+            const el = document.createElement('div');
+            el.className = 'work-item';
+            el.dataset.id = work.id;
+            el.innerHTML = `
+                <span class="drag-handle" title="Drag to reorder">&#8942;&#8942;</span>
+                <div class="work-info">
+                    <img src="${work.url}" class="work-thumb" onerror="this.style.background='#222'">
+                    <div class="work-meta">
+                        <div class="work-name">${work.filename}</div>
+                        <div class="work-pos">Position #${index + 1}</div>
+                    </div>
+                </div>
+                <div class="work-actions">
+                    <button class="action-btn btn-delete" onclick="deleteWork('${work.id}', '${work.filename}')">TRASH</button>
+                </div>
+            `;
+            container.appendChild(el);
+        });
+        setupDragSort();
+    }
+
+    async function deleteWork(id, filename) {
+        if (!confirm(`Permanently delete "${filename}"?`)) return;
+        try {
+            const res = await fetch(`${API}/delete?id=${id}`, {
+                method: 'POST', headers: { 'Authorization': `Basic ${authKey}` }
+            });
+            const data = await res.json();
+            if (data.success) { currentWorks = currentWorks.filter(w => w.id !== id); renderWorks(); }
+            else alert("Delete failed: " + (data.error || data.message));
+        } catch(e) { alert("Connection error"); }
+    }
+
+    async function saveOrder() {
+        const ids = currentWorks.map(w => w.id);
+        try {
+            await fetch(`${API}/reorder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Basic ${authKey}` },
+                body: JSON.stringify({ order: ids })
+            });
+        } catch(e) { console.error("Failed to save order"); }
+    }
+
+    // ── Drag to Reorder ───────────────────────────────────────────────────────
+    function setupDragSort() {
+        const container = document.getElementById('worksContainer');
+        let dragged = null;
+
+        container.querySelectorAll('.work-item').forEach(item => {
+            item.setAttribute('draggable', 'true');
+            item.addEventListener('dragstart', () => { dragged = item; setTimeout(() => item.classList.add('dragging'), 0); });
+            item.addEventListener('dragend', () => { item.classList.remove('dragging'); dragged = null; saveOrder(); });
+            item.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (dragged && dragged !== item) {
+                    const rect = item.getBoundingClientRect();
+                    const after = e.clientY > rect.top + rect.height / 2;
+                    container.insertBefore(dragged, after ? item.nextSibling : item);
+                    // Sync currentWorks array
+                    const items = [...container.querySelectorAll('.work-item')];
+                    currentWorks = items.map(el => currentWorks.find(w => w.id == el.dataset.id)).filter(Boolean);
+                    renderPositionLabels();
+                }
+            });
+        });
+    }
+
+    function renderPositionLabels() {
+        document.querySelectorAll('.work-pos').forEach((el, i) => el.textContent = `Position #${i + 1}`);
+    }
+
+    fetchWorks();
+</script>
+</body>
+</html>
