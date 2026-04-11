@@ -240,12 +240,13 @@ a { text-decoration: none; color: inherit; cursor: none; }
 .contact-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 2rem;
     padding: 1rem 0;
 }
 
 .divider-h { width: 100%; height: 1px; background-color: var(--border-dark); }
-.divider-v { width: 1px; height: 15px; background-color: var(--border-dark); margin: 0 1rem; }
+.divider-v { width: 1px; height: 15px; background-color: var(--border-dark); margin: 0; }
 
 .contact-row a { transition: opacity 0.3s; opacity: 0.7; font-weight: 500; }
 .contact-row a:hover { opacity: 1; }
@@ -348,7 +349,8 @@ a { text-decoration: none; color: inherit; cursor: none; }
 
 .f-contact-grid {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 2rem;
     align-items: center;
     padding: 1rem 0;
     font-size: 0.75rem;
@@ -360,7 +362,7 @@ a { text-decoration: none; color: inherit; cursor: none; }
 .f-contact-grid a:hover { color: #fff; }
 
 .f-divider-h { width: 100%; height: 1px; background-color: var(--border-light); }
-.f-divider-v { width: 1px; height: 15px; background-color: var(--border-light); margin: 0 1rem; }
+.f-divider-v { width: 1px; height: 15px; background-color: var(--border-light); margin: 0; }
 
 /* 1920x1080 Landscape Layout */
 .p-landscape .project-content {
