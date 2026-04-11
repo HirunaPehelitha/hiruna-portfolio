@@ -82,7 +82,7 @@
                         <a href="https://www.behance.net/hirunapehelitha"
                             target="_blank">behance.net/hirunapehelitha</a>
                         <div class="divider-v"></div>
-                        <a href="#">instagram.com/hiruna.creator</a>
+                        <a href="https://www.instagram.com/hirun_pehelitha?igsh=aWJxcW1yZzhvdXJq&utm_source=qr" target="_blank">instagram.com/hirun_pehelitha</a>
                     </div>
                 </div>
             </div>
@@ -130,7 +130,7 @@
             <div class="f-contact-grid">
                 <a href="https://www.behance.net/hirunapehelitha" target="_blank">behance.net/hirunapehelitha</a>
                 <div class="f-divider-v"></div>
-                <a href="#">instagram.com/hiruna.creator</a>
+                <a href="https://www.instagram.com/hirun_pehelitha?igsh=aWJxcW1yZzhvdXJq&utm_source=qr" target="_blank">instagram.com/hirun_pehelitha</a>
             </div>
         </div>
     </section>
@@ -140,37 +140,37 @@
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.35/dist/lenis.min.js"></script>
     <!-- Works Loader: fetches from Firebase via our API -->
     <script>
-    (async function loadWorks() {
-        const stack = document.getElementById('worksStack');
-        if (!stack) return;
+        (async function loadWorks() {
+            const stack = document.getElementById('worksStack');
+            if (!stack) return;
 
-        let images = [];
-        try {
-            const res = await fetch('/api/works');
-            const data = await res.json();
-            if (data.success && data.works) {
-                images = data.works.map(w => ({ src: w.url, alt: w.filename }));
+            let images = [];
+            try {
+                const res = await fetch('/api/works');
+                const data = await res.json();
+                if (data.success && data.works) {
+                    images = data.works.map(w => ({ src: w.url, alt: w.filename }));
+                }
+            } catch (e) { console.warn('Works load failed', e); }
+
+            if (images.length === 0) {
+                stack.innerHTML = "<p style='color:#444; text-align:center; padding:60px 0; font-size:0.8rem; letter-spacing:0.2em;'>WORKS LOADING...</p>";
+                return;
             }
-        } catch(e) { console.warn('Works load failed', e); }
 
-        if (images.length === 0) {
-            stack.innerHTML = "<p style='color:#444; text-align:center; padding:60px 0; font-size:0.8rem; letter-spacing:0.2em;'>WORKS LOADING...</p>";
-            return;
-        }
+            stack.innerHTML = images.map(img =>
+                `<img src="${img.src}" class="stack-img gsap-fade-up" alt="${img.alt}">`
+            ).join('');
 
-        stack.innerHTML = images.map(img =>
-            `<img src="${img.src}" class="stack-img gsap-fade-up" alt="${img.alt}">`
-        ).join('');
-
-        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-            gsap.utils.toArray('#worksStack .gsap-fade-up').forEach(el => {
-                gsap.fromTo(el, { y: 50, autoAlpha: 0 }, {
-                    y: 0, autoAlpha: 1, duration: 1, ease: "power2.out",
-                    scrollTrigger: { trigger: el, start: "top 90%" }
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.utils.toArray('#worksStack .gsap-fade-up').forEach(el => {
+                    gsap.fromTo(el, { y: 50, autoAlpha: 0 }, {
+                        y: 0, autoAlpha: 1, duration: 1, ease: "power2.out",
+                        scrollTrigger: { trigger: el, start: "top 90%" }
+                    });
                 });
-            });
-        }
-    })();
+            }
+        })();
     </script>
     <script src="script.js"></script>
 </body>
