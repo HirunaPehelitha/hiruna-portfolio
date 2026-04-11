@@ -33,7 +33,8 @@ export default async function handler(req, res) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     file: imageBase64,
-                    upload_preset: CLOUDINARY_PRESET
+                    upload_preset: CLOUDINARY_PRESET,
+                    filename_override: filename.replace(/\.[^/.]+$/, '')
                 })
             }
         );
