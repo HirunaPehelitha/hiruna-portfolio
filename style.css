@@ -362,3 +362,15 @@ a { text-decoration: none; color: inherit; cursor: none; }
     .grid-4x2 { grid-template-columns: repeat(2, 1fr); }
     .vertical-nav { display: none; }
 }
+
+@media (max-width: 768px) {
+    .about-name { font-size: 2.2rem; word-wrap: break-word; }
+    .about-role { margin-bottom: 1.5rem; }
+    .about-bio { max-width: 100%; }
+    .about-contacts { max-width: 100%; }
+    .contact-row, .f-contact-grid { flex-direction: column; gap: 0.8rem; text-align: center; }
+    .divider-v, .f-divider-v { display: none; }
+    .about-left { padding: 8vh 6vw; }
+    .pill-btn { padding: 1rem 2rem; font-size: 0.65rem; }
+    .qr-code { display: none; } /* Hide QR on very small mobile screens */
+}
