@@ -263,6 +263,42 @@ a { text-decoration: none; color: inherit; cursor: none; }
 .qr-code img { width: 80px; height: 80px; margin-bottom: 0.5rem; }
 .qr-code p { font-size: 0.6rem; font-weight: 600; }
 
+/* Works Intro Slide */
+.works-intro {
+    background-color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.works-intro-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.works-title {
+    font-size: clamp(3rem, 6vw, 6rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.works-divider {
+    width: 2px;
+    height: 60px;
+    background: rgba(255,255,255,0.3);
+}
+
+.works-subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    opacity: 0.7;
+    text-transform: uppercase;
+}
+
 /* Embedded Works Stack */
 .presentation-stack {
     width: 100vw;
