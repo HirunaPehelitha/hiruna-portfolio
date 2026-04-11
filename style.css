@@ -276,6 +276,94 @@ a { text-decoration: none; color: inherit; cursor: none; }
 .qr-code img { width: 80px; height: 80px; margin-bottom: 0.5rem; }
 .qr-code p { font-size: 0.6rem; font-weight: 600; }
 
+/* Experience & Skills Slide */
+.exp-skills-slide {
+    background-color: #151515;
+    color: white;
+    padding: 12vh 10vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.exp-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8vw;
+    width: 100%;
+    max-width: 1400px;
+}
+
+.exp-title {
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    font-weight: 600;
+    margin-bottom: 3rem;
+    opacity: 0.5;
+    text-transform: uppercase;
+}
+
+.exp-item {
+    margin-bottom: 2.5rem;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.exp-item::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 5px;
+    width: 7px;
+    height: 7px;
+    background: white;
+    border-radius: 50%;
+}
+
+.exp-year {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+}
+
+.exp-role {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.02em;
+}
+
+.exp-desc {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.6;
+}
+
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.skill-tag {
+    padding: 0.8rem 1.5rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    background: rgba(255,255,255,0.03);
+    transition: all 0.3s;
+}
+
+.skill-tag:hover {
+    background: white;
+    color: black;
+    transform: translateY(-2px);
+}
+
 /* Works Intro Slide */
 .works-intro {
     background-color: var(--bg-dark);
@@ -425,4 +513,6 @@ a { text-decoration: none; color: inherit; cursor: none; }
     .about-left { padding: 8vh 6vw; }
     .pill-btn { padding: 1rem 2rem; font-size: 0.65rem; }
     .qr-code { display: none; } /* Hide QR on very small mobile screens */
+    .exp-container { grid-template-columns: 1fr; gap: 4rem; }
+    .exp-skills-slide { padding: 10vh 8vw; }
 }
