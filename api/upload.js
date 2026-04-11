@@ -18,8 +18,11 @@ export default async function handler(req, res) {
     const CLOUDINARY_CLOUD = process.env.CLOUDINARY_CLOUD;
     const CLOUDINARY_PRESET = process.env.CLOUDINARY_PRESET;
 
-    const { filename, imageBase64 } = req.body;
-    if (!filename || !imageBase64) return res.status(400).json({ error: 'Missing data' });
+    const { filename: originalFilename, imageBase64 } = req.body;
+    if (!originalFilename || !imageBase64) return res.status(400).json({ error: 'Missing data' });
+    
+    // Sanitize filename to prevent "Display name cannot contain slashes" or similar errors
+    const filename = originalFilename.replace(/[/\\?%*:|"<>]/g, '-').replace(/\s+/g, '_');
 
     try {
         // 1. Upload to Cloudinary (unsigned upload preset)
